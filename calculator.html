@@ -1,213 +1,257 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Interactive Physics Calculator</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
-    <style>
-      body,
-      .card {
-        background-color: #333;
-        color: white;
-      }
-      .form-control,
-      .btn {
-        background-color: #212121;
-        color: white;
-        border: 1px solid #444;
-      }
-      .form-control:focus {
-        box-shadow: none;
-        border-color: #007bff;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container mt-5">
-      <div class="card">
-        <div class="card-header">
-          <h2>Interactive Physics Calculator</h2>
-        </div>
-        <div class="card-body">
-          <form id="calculatorForm">
-            <!-- Equation Type Selector -->
-            <div class="form-group">
-              <label for="calculationType">Select Equation Type</label>
-              <select
-                id="calculationType"
-                onchange="showEquations()"
-                class="form-control"
-              >
-                <option value="">--Select Equation Type--</option>
-                <option value="suvat">SUVAT</option>
-                <option value="energy">Energy</option>
-                <option value="power">Power</option>
-                <option value="electricity">Electricity</option>
-              </select>
-            </div>
 
-            <!-- Output Variable Selector -->
-            <div
-              class="form-group"
-              id="outputVariableDiv"
-              style="display: none"
-            >
-              <label for="outputVariable">Select Output Variable</label>
-              <select
-                id="outputVariable"
-                onchange="showFields()"
-                class="form-control"
-              >
-                <!-- Options will be populated dynamically -->
-              </select>
-            </div>
+<head>
+  <title>Interactive Physics Calculator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body,
+    .card {
+      background-color: #333;
+      color: white;
+    }
 
-            <!-- Dynamic Input Fields -->
-            <div id="inputFields">
-              <!-- Input fields will be populated dynamically -->
-            </div>
+    .form-control,
+    .btn {
+      background-color: #212121;
+      color: white;
+      border: 1px solid #444;
+    }
 
-            <button
-              type="button"
-              onclick="calculate()"
-              class="btn btn-primary mt-3"
-            >
-              Calculate
-            </button>
-          </form>
-          <p class="mt-3">Result: <span id="result"></span></p>
-        </div>
+    .form-control:focus {
+      box-shadow: none;
+      border-color: #007bff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header">
+        <h2>Interactive Physics Calculator</h2>
+      </div>
+      <div class="card-body">
+        <form id="calculatorForm">
+          <!-- Equation Type Selector -->
+          <div class="form-group">
+            <label for="calculationType">Select Equation Type</label>
+            <select id="calculationType" onchange="showEquations()" class="form-control">
+              <option value="">--Select Equation Type--</option>
+              <option value="suvat">SUVAT</option>
+              <option value="energy">Energy</option>
+              <option value="power">Power</option>
+              <option value="electricity">Electricity</option>
+            </select>
+          </div>
+
+          <!-- Output Variable Selector -->
+          <div class="form-group" id="outputVariableDiv" style="display: none">
+            <label for="outputVariable">Select Output Variable</label>
+            <select id="outputVariable" onchange="showFields()" class="form-control">
+              <!-- Options will be populated dynamically -->
+            </select>
+          </div>
+
+          <!-- Dynamic Input Fields -->
+          <div id="inputFields">
+            <!-- Input fields will be populated dynamically -->
+          </div>
+
+          <button type="button" onclick="calculate()" class="btn btn-primary mt-3">
+            Calculate
+          </button>
+        </form>
+        <p class="mt-3">Result: <span id="result"></span></p>
       </div>
     </div>
+  </div>
 
-    <script>
-      let equations = {
-        suvat: [
-          { output: "v", equation: "v = u + at", inputs: ["u", "a", "t"] },
-          {
-            output: "s",
-            equation: "s = ut + 0.5 * a * t^2",
-            inputs: ["u", "a", "t"],
-          },
-        ],
-        energy: [
-          { output: "KE", equation: "KE = 0.5 * m * v^2", inputs: ["m", "v"] },
-          { output: "PE", equation: "PE = m * g * h", inputs: ["m", "g", "h"] },
-        ],
-        power: [{ output: "P", equation: "P = W/t", inputs: ["W", "t"] }],
-        electricity: [
-          { output: "V", equation: "V = I * R", inputs: ["I", "R"] },
-          { output: "I", equation: "I = V / R", inputs: ["V", "R"] },
-          { output: "R", equation: "R = V / I", inputs: ["V", "I"] },
-        ],
-      };
+  <script>
+    let equations = {
+      suvat: [{
+          output: "v",
+          equation: "v = u + at",
+          inputs: ["u", "a", "t"]
+        },
+        {
+          output: "s",
+          equation: "s = ut + 0.5 * a * t^2",
+          inputs: ["u", "a", "t"],
+        },
+      ],
+      energy: [{
+          output: "KE",
+          equation: "KE = 0.5 * m * v^2",
+          inputs: ["m", "v"]
+        },
+        {
+          output: "PE",
+          equation: "PE = m * g * h",
+          inputs: ["m", "g", "h"]
+        },
+      ],
+      power: [{
+        output: "P",
+        equation: "P = W/t",
+        inputs: ["W", "t"]
+      }],
+      electricity: [{
+          output: "V",
+          equation: "V = I * R",
+          inputs: ["I", "R"]
+        },
+        {
+          output: "I",
+          equation: "I = V / R",
+          inputs: ["V", "R"]
+        },
+        {
+          output: "R",
+          equation: "R = V / I",
+          inputs: ["V", "I"]
+        },
+      ],
+    };
 
-      function showEquations() {
-        const type = document.getElementById("calculationType").value;
-        const outputVariable = document.getElementById("outputVariable");
-        outputVariable.innerHTML =
-          '<option value="">--Select Output Variable--</option>';
+    function showEquations() {
+      const type = document.getElementById("calculationType").value;
+      const outputVariable = document.getElementById("outputVariable");
+      outputVariable.innerHTML =
+        '<option value="">--Select Output Variable--</option>';
 
-        if (equations[type]) {
-          equations[type].forEach((equation) => {
-            const option = document.createElement("option");
-            option.value = equation.output;
-            option.textContent = equation.output;
-            outputVariable.appendChild(option);
-          });
+      if (equations[type]) {
+        equations[type].forEach((equation) => {
+          const option = document.createElement("option");
+          option.value = equation.output;
+          option.textContent = equation.output;
+          outputVariable.appendChild(option);
+        });
 
-          document.getElementById("outputVariableDiv").style.display = "block";
-        } else {
-          document.getElementById("outputVariableDiv").style.display = "none";
-        }
-
-        document.getElementById("inputFields").innerHTML = "";
+        document.getElementById("outputVariableDiv").style.display = "block";
+      } else {
+        document.getElementById("outputVariableDiv").style.display = "none";
       }
 
-      function showFields() {
-        const type = document.getElementById("calculationType").value;
-        const output = document.getElementById("outputVariable").value;
-        const inputFields = document.getElementById("inputFields");
-        inputFields.innerHTML = "";
+      document.getElementById("inputFields").innerHTML = "";
+    }
 
-        const selectedEquation = equations[type].find(
-          (equation) => equation.output === output
-        );
-        if (selectedEquation) {
-          selectedEquation.inputs.forEach((input) => {
-            const div = document.createElement("div");
-            div.className = "form-group";
-            const label = document.createElement("label");
-            label.textContent = `Enter ${input}`;
-            const inputField = document.createElement("input");
-            inputField.type = "number";
-            inputField.id = `${input}_${type}`; // Moved this line here
-            inputField.className = "form-control";
-            div.appendChild(label);
-            div.appendChild(inputField);
-            inputFields.appendChild(div);
-          });
+    function showFields() {
+      const type = document.getElementById('calculationType').value;
+      const output = document.getElementById('outputVariable').value;
+      const inputFields = document.getElementById('inputFields');
+      inputFields.innerHTML = '';
+
+      const selectedEquation = equations[type].find(equation => equation.output === output);
+      if (selectedEquation) {
+        selectedEquation.inputs.forEach(input => {
+          const div = document.createElement('div');
+          div.className = 'form-group';
+
+          const label = document.createElement('label');
+          label.textContent = `Enter ${input}`;
+
+          const inputField = document.createElement('input');
+          inputField.type = 'number';
+          inputField.id = `${input}_${type}`;
+          inputField.className = 'form-control';
+
+          const description = document.createElement('small');
+          description.className = 'form-text text-muted';
+          description.textContent = variableDescriptions[type][input] || 'Description not available';
+
+          div.appendChild(label);
+          div.appendChild(inputField);
+          div.appendChild(description); // Added this line
+          inputFields.appendChild(div);
+        });
+      }
+    }
+
+    function calculate() {
+      const type = document.getElementById("calculationType").value;
+      const output = document.getElementById("outputVariable").value;
+      let result = "";
+
+      const equationInfo = equations[type].find((e) => e.output === output);
+      if (equationInfo) {
+        const inputValues = {};
+        equationInfo.inputs.forEach((input) => {
+          inputValues[input] = parseFloat(
+            document.getElementById(`${input}_${type}`).value
+          ); // IDs are now correct
+        });
+
+        switch (type) {
+          case "suvat":
+            if (output === "v") {
+              result = inputValues["u"] + inputValues["a"] * inputValues["t"];
+            } else if (output === "s") {
+              result =
+                inputValues["u"] * inputValues["t"] +
+                0.5 * inputValues["a"] * Math.pow(inputValues["t"], 2);
+            }
+            break;
+
+          case "energy":
+            if (output === "KE") {
+              result = 0.5 * inputValues["m"] * Math.pow(inputValues["v"], 2);
+            } else if (output === "PE") {
+              result = inputValues["m"] * inputValues["g"] * inputValues["h"];
+            }
+            break;
+
+          case "power":
+            if (output === "P") {
+              result = inputValues["W"] / inputValues["t"];
+            }
+            break;
+
+          case "electricity":
+            if (output === "V") {
+              result = inputValues["I"] * inputValues["R"];
+            } else if (output === "I") {
+              result = inputValues["V"] / inputValues["R"];
+            } else if (output === "R") {
+              result = inputValues["V"] / inputValues["I"];
+            }
+            break;
+
+          default:
+            result = "Equation type not supported";
         }
       }
 
-      function calculate() {
-        const type = document.getElementById("calculationType").value;
-        const output = document.getElementById("outputVariable").value;
-        let result = "";
-
-        const equationInfo = equations[type].find((e) => e.output === output);
-        if (equationInfo) {
-          const inputValues = {};
-          equationInfo.inputs.forEach((input) => {
-            inputValues[input] = parseFloat(
-              document.getElementById(`${input}_${type}`).value
-            ); // IDs are now correct
-          });
-
-          switch (type) {
-            case "suvat":
-              if (output === "v") {
-                result = inputValues["u"] + inputValues["a"] * inputValues["t"];
-              } else if (output === "s") {
-                result =
-                  inputValues["u"] * inputValues["t"] +
-                  0.5 * inputValues["a"] * Math.pow(inputValues["t"], 2);
-              }
-              break;
-
-            case "energy":
-              if (output === "KE") {
-                result = 0.5 * inputValues["m"] * Math.pow(inputValues["v"], 2);
-              } else if (output === "PE") {
-                result = inputValues["m"] * inputValues["g"] * inputValues["h"];
-              }
-              break;
-
-            case "power":
-              if (output === "P") {
-                result = inputValues["W"] / inputValues["t"];
-              }
-              break;
-
-            case "electricity":
-              if (output === "V") {
-                result = inputValues["I"] * inputValues["R"];
-              } else if (output === "I") {
-                result = inputValues["V"] / inputValues["R"];
-              } else if (output === "R") {
-                result = inputValues["V"] / inputValues["I"];
-              }
-              break;
-
-            default:
-              result = "Equation type not supported";
-          }
-        }
-
-        document.getElementById("result").textContent = `${result}`;
+      document.getElementById("result").textContent = `${result}`;
+    }
+    const variableDescriptions = {
+      'suvat': {
+        'u': 'Initial velocity',
+        'v': 'Final velocity',
+        'a': 'Acceleration',
+        's': 'Displacement',
+        't': 'Time'
+      },
+      'energy': {
+        'KE': 'Kinetic Energy',
+        'PE': 'Potential Energy',
+        'm': 'Mass',
+        'v': 'Velocity',
+        'g': 'Acceleration due to Gravity',
+        'h': 'Height'
+      },
+      'power': {
+        'P': 'Power',
+        'W': 'Work Done',
+        't': 'Time'
+      },
+      'electricity': {
+        'V': 'Voltage',
+        'I': 'Current',
+        'R': 'Resistance'
       }
-    </script>
-  </body>
+    };
+  </script>
+</body>
+
 </html>
